@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 bagian ini adalah bagian untuk meng import libary matplotlib& libary random yang berfungsi untuk membuat angka acak atau random dan membuat sebuah grafik 
 
 BAGIAN DATA PENGELUARAN
+
 items = [
     ("Makan", 20000, 80),
     ("Kopi", 15000, 60),
@@ -20,7 +21,6 @@ items = [
     ("Internet", 5000, 40),
 ]
 BUDGET = 50000
-
 POP_SIZE = 30
 GENERATIONS = 100
 MUTATION_RATE = 0.2
@@ -30,7 +30,6 @@ bagian ini adalah bagian inisialisasi parameter dan data dalam sebuah program Al
 BAGIAN INIT
 def create_individual():
     return [random.randint(0,1) for _ in items]
-
 def init_population():
     return [create_individual() for _ in range(POP_SIZE)]
 
@@ -45,15 +44,12 @@ BAGIAN FITNESS
 def fitness(ind):
     total_cost = 0
     total_value = 0
-
     for gene, (name, cost, value) in zip(ind, items):
         if gene == 1:
             total_cost += cost
             total_value += value
-
     if total_cost > BUDGET:
         return 0
-
     return total_value
 
 lanjut dari Bagian Init, Bagian ini berfungsi untuk menentukan kualitas atau nilai dari setiap individu (solusi) yang telah dibuat pada tahap populasi awal. Dalam algoritma genetika, proses ini disebut sebagai fitness evaluation, yaitu proses penilaian seberapa baik suatu solusi terhadap tujuan yang ingin dicapai. Fungsi fitness(ind) digunakan untuk menghitung nilai fitness dari satu individu. Di dalam fungsi ini, terdapat dua variabel utama yaitu total_cost dan total_value.
@@ -66,7 +62,7 @@ BAGIAN SELECTION
 def selection(pop):
     return max(random.sample(pop, 3), key=fitness)
 
-# selanjutnya dari Bagian Selection, Bagian ini berfungsi untuk memilih individu terbaik dari populasi berdasarkan nilai fitness yang telah dihitung sebelumnya. Proses ini merupakan salah satu tahap penting dalam algoritma genetika karena menentukan individu mana yang akan dilanjutkan ke proses berikutnya seperti crossover dan mutasi.
+selanjutnya dari Bagian Selection, Bagian ini berfungsi untuk memilih individu terbaik dari populasi berdasarkan nilai fitness yang telah dihitung sebelumnya. Proses ini merupakan salah satu tahap penting dalam algoritma genetika karena menentukan individu mana yang akan dilanjutkan ke proses berikutnya seperti crossover dan mutasi.
 Fungsi selection(pop) digunakan untuk melakukan pemilihan satu individu terbaik dari sekumpulan populasi. Di dalam fungsi ini digunakan metode tournament selection, yaitu metode seleksi dengan cara mengambil beberapa individu secara acak kemudian membandingkan nilai fitness-nya.
 1. random.sample(pop, 3) : Setelah itu, dari ketiga individu tersebut, dipilih satu individu yang memiliki nilai fitness tertinggi
 2. max(..., key=fitness) : menggunakan ini, Artinya, individu dengan nilai fitness terbaik akan dipilih sebagai hasil seleksi.
@@ -89,7 +85,7 @@ def mutate(ind):
             ind[i] = 1 - ind[i]
     return ind
 
-# selanjutnya dari Bagian Crossover, Bagian ini berfungsi untuk melakukan perubahan acak pada individu (solusi) dalam populasi. Dalam algoritma genetika, proses ini disebut sebagai mutasi, yang bertujuan untuk menjaga keberagaman solusi agar tidak terjadi kondisi stagnan atau terlalu cepat konvergen pada satu solusi saja. Fungsi mutate(ind) digunakan untuk memodifikasi satu individu dengan cara mengecek setiap gen (elemen) di dalam individu satu per satu menggunakan perulangan.
+selanjutnya dari Bagian Crossover, Bagian ini berfungsi untuk melakukan perubahan acak pada individu (solusi) dalam populasi. Dalam algoritma genetika, proses ini disebut sebagai mutasi, yang bertujuan untuk menjaga keberagaman solusi agar tidak terjadi kondisi stagnan atau terlalu cepat konvergen pada satu solusi saja. Fungsi mutate(ind) digunakan untuk memodifikasi satu individu dengan cara mengecek setiap gen (elemen) di dalam individu satu per satu menggunakan perulangan.
 Pada setiap gen, dilakukan pengecekan menggunakan nilai acak:
 if random.random() < MUTATION_RATE: Jika kondisi tersebut terpenuhi (dalam kode ini probabilitasnya ditentukan oleh MUTATION_RATE), maka nilai gen akan dibalik.
 ind[i] = 1 - ind[i] : menggunakan ini, 
@@ -103,13 +99,11 @@ def decode(ind):
     chosen = []
     total_cost = 0
     total_value = 0
-
     for gene, (name, cost, value) in zip(ind, items):
         if gene == 1:
             chosen.append(name)
             total_cost += cost
             total_value += value
-
     return chosen, total_cost, total_value
 
 lanjut dari Bagian Mutation, Bagian ini berfungsi untuk mengubah representasi solusi dari bentuk biner (individu dalam algoritma genetika) menjadi bentuk yang lebih mudah dipahami oleh manusia. Proses ini disebut sebagai decode, yaitu proses penerjemahan hasil kromosom menjadi informasi nyata berupa item yang dipilih beserta total biaya dan total nilainya. Fungsi decode(ind) menerima satu individu sebagai input, yaitu daftar yang berisi nilai 0 dan 1 yang merepresentasikan apakah suatu item dipilih atau tidak. Kemudian, fungsi ini melakukan iterasi pada setiap gen dalam individu dengan menggunakan zip(ind, items) untuk menggabungkan data gen dengan informasi item yang tersedia. Jika nilai gen adalah 1, maka item tersebut dianggap dipilih dan akan dimasukkan ke dalam daftar chosen. Selain itu, nilai cost dan value dari item tersebut akan ditambahkan ke variabel total_cost dan total_value.
@@ -122,32 +116,21 @@ BAGIAN GA
 def GA():
     pop = init_population()
     best_hist = []
-
     print("\n===== OPTIMASI UANG JAJAN =====\n")
-
     for gen in range(GENERATIONS):
-
         pop = sorted(pop, key=fitness, reverse=True)
-
         best = pop[0]
         best_fit = fitness(best)
-
         best_hist.append(best_fit)
-
         if gen % 5 == 0:
             print(f"Gen {gen:3d} | Nilai kepuasan: {best_fit}")
-
         new_pop = pop[:2]
-
         while len(new_pop) < POP_SIZE:
             p1 = selection(pop)
             p2 = selection(pop)
-
             child = crossover(p1, p2)
             child = mutate(child)
-
             new_pop.append(child)
-
         pop = new_pop
 
 lanjut dari Bagian Decode, Bagian ini merupakan inti dari keseluruhan program yang berfungsi untuk menjalankan proses optimasi menggunakan metode Genetic Algorithm (GA). Pada tahap ini, seluruh proses evolusi seperti seleksi, crossover, dan mutasi dijalankan secara berulang untuk mencari solusi terbaik dari permasalahan yang diberikan. Fungsi GA() diawali dengan membentuk populasi awal menggunakan init_population(), kemudian dibuat variabel best_hist untuk menyimpan perkembangan nilai terbaik dari setiap generasi. Selanjutnya, algoritma dijalankan dalam perulangan sebanyak GENERATIONS, yang merepresentasikan jumlah iterasi evolusi. 
@@ -164,12 +147,10 @@ Hasil anak tersebut kemudian dimasukkan ke populasi baru. Setelah populasi baru 
 BAGIAN HASIL
     best = sorted(pop, key=fitness, reverse=True)[0]
     chosen, cost, value = decode(best)
-
     print("\n===== HASIL AKHIR =====")
     print("Pilihan:", chosen)
     print("Total biaya:", cost)
     print("Total kepuasan:", value)
-
     if cost <= BUDGET:
         print("Penjelasan: Pengeluaran optimal sesuai budget.")
     else:
